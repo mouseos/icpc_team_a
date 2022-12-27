@@ -4,6 +4,8 @@ import numpy as np
 import glob
 import re
 import ctypes
+import collections
+
 #enable color for windows
 ENABLE_PROCESSED_OUTPUT = 0x0001
 ENABLE_WRAP_AT_EOL_OUTPUT = 0x0002
@@ -28,7 +30,6 @@ def extract_file_name(path):
 print(extract_file_name("path/to/file.png"))
 
 video_capture = cv2.VideoCapture(0)
-
 #Define the path included faces
 face_path="./faces"
 face_mask_path=face_path+"/trained/with_mask/*"
@@ -73,7 +74,9 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
-
+detected_names=[]
+scan_cnt=0
+send_frames=10;
 while True:
 	# Grab a single frame of video
 	ret, frame = video_capture.read()
@@ -128,10 +131,19 @@ while True:
 		font = cv2.FONT_HERSHEY_DUPLEX
 		cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 		
-			
-			
+		#Get name
+		detected_names.append(name)
+		
+		scan_cnt+=1
+		
+		if(scan_cnt==send_frames):
+			scan_cnt=0
+			detected_names_order=collections.Counter(detected_names)
+			print(detected_names_order.most_common())
+			detected_names=[]
+		
 	# Display the resulting image
-	cv2.namedWindow("Video", cv2.WINDOW_NORMAL)
+	cv2.namedWindow("Video", cv2.WINDOW_KEEPRATIO)#not working aspect ratio is incorrect
 	cv2.imshow('Video', frame)
 
 	# Hit 'q' on the keyboard to quit!
