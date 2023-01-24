@@ -29,7 +29,9 @@ def extract_file_name(path):
 
 print(extract_file_name("path/to/file.png"))
 
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(cv2.CAP_DSHOW)
+
+
 #Define the path included faces
 face_path="./faces"
 face_mask_path=face_path+"/trained/with_mask/*"
@@ -80,7 +82,7 @@ send_frames=10;
 while True:
 	# Grab a single frame of video
 	ret, frame = video_capture.read()
-
+	
 	# Only process every other frame of video to save time
 	if process_this_frame:
 		# Resize frame of video to 1/4 size for faster face recognition processing
